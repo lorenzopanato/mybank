@@ -16,6 +16,14 @@ public class Customer {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "nome='" + name + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 
     public String getName() {
         return name;

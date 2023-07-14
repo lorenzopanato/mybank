@@ -1,9 +1,14 @@
 package com.mybank.account;
 
+import com.mybank.customer.Customer;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 //interacoes com o banco
 public class AccountDAO {
@@ -16,7 +21,6 @@ public class AccountDAO {
 
     public void create(Integer accountNumber, String customerName, String customerCpf,
                        String customerEmail) {
-
         PreparedStatement ps;
 
         String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email) " +
@@ -39,5 +43,40 @@ public class AccountDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public Set<Account> list() {
+
+        PreparedStatement ps;
+        ResultSet rs;
+
+        Set<Account> accounts = new HashSet<>();
+
+        String sql = "SELECT * FROM conta";
+
+        try {
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while(rs.next()) {
+                Integer number = rs.getInt(1);
+                BigDecimal balance = rs.getBigDecimal(2);
+                String name = rs.getString(3);
+                String cpf = rs.getString(4);
+                String email = rs.getString(5);
+
+                Customer customer = new Customer(name, cpf, email);
+
+                accounts.add(new Account(number, balance, customer));
+            }
+            ps.close();
+            conn.close();
+            rs.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        return accounts;
     }
 }

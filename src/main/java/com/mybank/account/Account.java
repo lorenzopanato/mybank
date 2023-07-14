@@ -21,6 +21,15 @@ public class Account {
         this.customer = customer;
     }
 
+    @Override
+    public String toString() {
+        return "Conta{" +
+                "numero='" + number + '\'' +
+                ", saldo=" + balance +
+                ", titular=" + customer +
+                '}';
+    }
+
     public Integer getNumber() {
         return number;
     }
