@@ -79,4 +79,26 @@ public class AccountDAO {
 
         return accounts;
     }
+
+    public void update(Integer accountNumber, BigDecimal amount) {
+
+        PreparedStatement ps;
+
+        String sql = "UPDATE conta SET saldo = ? WHERE numero = ?";
+
+        try {
+            ps = conn.prepareStatement(sql);
+
+            ps.setBigDecimal(1, amount);
+            ps.setInt(2, accountNumber);
+
+            ps.execute();
+
+            ps.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }

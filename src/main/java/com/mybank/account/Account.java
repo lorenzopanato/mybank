@@ -15,7 +15,6 @@ public class Account {
             throw new IllegalArgumentException("O número da conta deve ser maior que zero.");
         this.number = number;
 
-        //zero
         this.balance = balance;
 
         this.customer = customer;
