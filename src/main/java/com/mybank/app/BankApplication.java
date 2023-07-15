@@ -7,6 +7,7 @@ import com.mybank.account.AccountDAO;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -16,31 +17,48 @@ public class BankApplication {
 
     public static void main(String[] args) {
 
+        int option = 0;
 
-        menu();
-        try {
-            int option = sc.nextInt();
+        do {
+            menu();
+            try {
+                option = sc.nextInt();
 
-            switch (option) {
-                case 1:
-                    createAccount();
-                    break;
-                case 2:
-                    depositAmount();
-                    break;
-                case 3:
-                    withdrawValue();
-                    break;
-                case 4:
-                    transferAmount();
-                    break;
-                case 5:
-                    listAccounts();
-                    break;
+                switch (option) {
+                    case 1:
+                        createAccount();
+                        break;
+                    case 2:
+                        depositAmount();
+                        break;
+                    case 3:
+                        withdrawValue();
+                        break;
+                    case 4:
+                        transferAmount();
+                        break;
+                    case 5:
+                        listAccounts();
+                        break;
+                    case 6:
+                        deleteAccount();
+                        break;
+                    case 7:
+                        System.out.println("Saindo...");
+                        break;
+                    default:
+                        System.out.println("Valor inválido. Tente novamente");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Valor inválido. Digite um número inteiro");
+                sc.nextLine();
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
-        }
+
+        } while(option != 7);
+
+        sc.close();
     }
 
     private static void menu() {
@@ -166,5 +184,19 @@ public class BankApplication {
         new AccountDAO(conn2).update(destinationAccount.getNumber(), newDestinationAccountBalance);
 
         System.out.println("Transferência realizada com sucesso!");
+    }
+
+    private static void deleteAccount() {
+        System.out.println("Informe o número da conta a ser excluída:");
+        Integer number = sc.nextInt();
+
+        //se nenhuma conta for encontrada com o numero, lança uma exceçao
+        searchAccountByNumber(number);
+
+        Connection conn = new ConnectionFactory().getConnection();
+
+        new AccountDAO(conn).delete(number);
+
+        System.out.println("Conta excluída com sucesso!");
     }
 }

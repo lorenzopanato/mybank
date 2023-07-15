@@ -101,4 +101,24 @@ public class AccountDAO {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public void delete(Integer number) {
+
+        PreparedStatement ps;
+
+        String sql = "DELETE FROM conta WHERE numero = ?";
+
+        try {
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, number);
+
+            ps.execute();
+
+            ps.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }
