@@ -4,7 +4,7 @@ import com.mybank.customer.Customer;
 
 import java.math.BigDecimal;
 
-public class Account {
+public abstract class Account {
 
     private Integer number;
     private BigDecimal balance;
@@ -22,7 +22,7 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Conta{" +
+        return "{" +
                 "numero='" + number + '\'' +
                 ", saldo=" + balance +
                 ", titular=" + customer +

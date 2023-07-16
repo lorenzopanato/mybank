@@ -84,9 +84,23 @@ public class BankApplication {
         System.out.println("Informe o email do cliente:");
         String email = sc.next();
 
+        int typeAccountNumber;
+        String typeAccount = null;
+        do {
+            System.out.println("Informe o tipo da conta (1-Corrente; 2-Poupança):");
+            typeAccountNumber = sc.nextInt();
+
+            if (typeAccountNumber == 1)
+                typeAccount = "Corrente";
+            else if (typeAccountNumber == 2)
+                typeAccount = "Poupança";
+            else
+                System.out.println("Tipo inválido. Tente novamente");
+        } while(typeAccountNumber != 1 && typeAccountNumber != 2);
+
         Connection conn = new ConnectionFactory().getConnection();
 
-        new AccountDAO(conn).create(number, name, cpf, email);
+        new AccountDAO(conn).create(number, name, cpf, email, typeAccount);
 
         System.out.println("Conta criada com sucesso!");
     }

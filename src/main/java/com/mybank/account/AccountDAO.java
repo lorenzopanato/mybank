@@ -20,11 +20,11 @@ public class AccountDAO {
     }
 
     public void create(Integer accountNumber, String customerName, String customerCpf,
-                       String customerEmail) {
+                       String customerEmail, String typeAccount) {
         PreparedStatement ps;
 
-        String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email, tipo_conta) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             ps = conn.prepareStatement(sql);
@@ -34,6 +34,7 @@ public class AccountDAO {
             ps.setString(3, customerName);
             ps.setString(4, customerCpf);
             ps.setString(5, customerEmail);
+            ps.setString(6, typeAccount);
 
             ps.execute();
 
@@ -64,10 +65,14 @@ public class AccountDAO {
                 String name = rs.getString(3);
                 String cpf = rs.getString(4);
                 String email = rs.getString(5);
+                String typeAccount = rs.getString(6);
 
                 Customer customer = new Customer(name, cpf, email);
 
-                accounts.add(new Account(number, balance, customer));
+                if(typeAccount.equals("Poupança"))
+                    accounts.add(new savingsAccount(number, balance, customer));
+                else
+                    accounts.add(new checkingAccount(number, balance, customer));
             }
             ps.close();
             conn.close();

@@ -9,10 +9,6 @@ public class Customer {
     public Customer(String name, String cpf, String email) {
         this.name = name;
         this.cpf = cpf;
-
-        if(!email.contains("@"))
-            throw new IllegalArgumentException("O email deve possuir um @");
-
         this.email = email;
     }
 
