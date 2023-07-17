@@ -2,7 +2,6 @@ package com.mybank.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Random;
 
 public class Transaction {
 
@@ -12,19 +11,23 @@ public class Transaction {
     private LocalDate date;
     private BigDecimal amount;
 
-    public Transaction(Integer accountNumber, String type, BigDecimal amount) {
-        this.id = generateId();
+    public Transaction(Integer id, Integer accountNumber, String type, LocalDate date, BigDecimal amount) {
+        this.id = id;
         this.accountNumber = accountNumber;
         this.type = type;
-        this.date = LocalDate.now();
+        this.date = date;
         this.amount = amount;
     }
 
-    private Integer generateId() {
-        Random random = new Random();
-
-        //numero inteiro de quatro digitos
-        return random.nextInt(9000) + 1000;
+    @Override
+    public String toString() {
+        return "Transação{" +
+                "id=" + id +
+                ", numero da conta=" + accountNumber +
+                ", tipo='" + type + '\'' +
+                ", data=" + date +
+                ", valor=" + amount +
+                '}';
     }
 
     public Integer getId() {

@@ -9,9 +9,8 @@ import com.mybank.transaction.TransactionDAO;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 public class BankApplication {
 
@@ -46,6 +45,9 @@ public class BankApplication {
                         deleteAccount();
                         break;
                     case 7:
+                        listTransactions();
+                        break;
+                    case 8:
                         System.out.println("Saindo...");
                         break;
                     default:
@@ -58,7 +60,7 @@ public class BankApplication {
                 System.out.println("Erro: " + e.getMessage());
             }
 
-        } while(option != 7);
+        } while(option != 8);
 
         sc.close();
     }
@@ -70,7 +72,8 @@ public class BankApplication {
         System.out.println("4 - Realizar transferência");
         System.out.println("5 - Listar contas cadastradas");
         System.out.println("6 - Excluir conta");
-        System.out.println("7 - Sair");
+        System.out.println("7 - Ver histórico de transações do banco");
+        System.out.println("8 - Sair");
     }
 
     private static void createAccount() {
@@ -117,6 +120,16 @@ public class BankApplication {
         accounts.forEach(account -> System.out.println(account));
     }
 
+    private static void listTransactions() {
+        System.out.println("Histórico de transações:");
+
+        Connection conn = new ConnectionFactory().getConnection();
+
+        Set<Transaction> transactions = new TransactionDAO(conn).list();
+
+        transactions.forEach(transaction -> System.out.println(transaction));
+    }
+
     private static void depositAmount() {
         System.out.println("Informe o número da conta em que deseja realizar o depósito:");
         Integer number = sc.nextInt();
@@ -131,7 +144,7 @@ public class BankApplication {
         Connection conn1 = new ConnectionFactory().getConnection();
         new AccountDAO(conn1).update(number, newBalance);
 
-        Transaction transaction = new Transaction(number, "Depósito", amount);
+        Transaction transaction = new Transaction(generateId(), number, "Depósito", LocalDate.now(), amount);
 
         Connection conn2 = new ConnectionFactory().getConnection();
         new TransactionDAO(conn2).create(transaction);
@@ -153,31 +166,12 @@ public class BankApplication {
         Connection conn1 = new ConnectionFactory().getConnection();
         new AccountDAO(conn1).update(number, newBalance);
 
-        Transaction transaction = new Transaction(number, "Saque", amount);
+        Transaction transaction = new Transaction(generateId(), number, "Saque", LocalDate.now(), amount);
 
         Connection conn2 = new ConnectionFactory().getConnection();
         new TransactionDAO(conn2).create(transaction);
 
         System.out.println("Saque realizado com sucesso!");
-    }
-
-    private static Account searchAccountByNumber(Integer number) {
-        Connection conn = new ConnectionFactory().getConnection();
-
-        Set<Account> accounts = new AccountDAO(conn).list();
-
-        Account account = null;
-
-        for(Account a : accounts) {
-            if (number.equals(a.getNumber())) {
-                account = a;
-                break;
-            }
-        }
-        if(account == null)
-            throw new IllegalArgumentException("Não existe conta cadastrada com esse número!");
-
-        return account;
     }
 
     private static void transferAmount() {
@@ -207,8 +201,8 @@ public class BankApplication {
         //deposito na conta de destino
         new AccountDAO(conn2).update(destinationAccount.getNumber(), newDestinationAccountBalance);
 
-        Transaction originTransaction = new Transaction(originAccountNumber, "Transferência realizada", amount);
-        Transaction destinationTransaction = new Transaction(destinationAccountNumber, "Transferência recebida", amount);
+        Transaction originTransaction = new Transaction(generateId(), originAccountNumber, "Transferência realizada", LocalDate.now(), amount);
+        Transaction destinationTransaction = new Transaction(generateId(), destinationAccountNumber, "Transferência recebida", LocalDate.now(), amount);
 
         Connection conn3 = new ConnectionFactory().getConnection();
         new TransactionDAO(conn3).create(originTransaction);
@@ -217,6 +211,32 @@ public class BankApplication {
         new TransactionDAO(conn4).create(destinationTransaction);
 
         System.out.println("Transferência realizada com sucesso!");
+    }
+
+    private static Integer generateId() {
+        Random random = new Random();
+
+        //numero inteiro de quatro digitos
+        return random.nextInt(9000) + 1000;
+    }
+
+    private static Account searchAccountByNumber(Integer number) {
+        Connection conn = new ConnectionFactory().getConnection();
+
+        Set<Account> accounts = new AccountDAO(conn).list();
+
+        Account account = null;
+
+        for(Account a : accounts) {
+            if (number.equals(a.getNumber())) {
+                account = a;
+                break;
+            }
+        }
+        if(account == null)
+            throw new IllegalArgumentException("Não existe conta cadastrada com esse número!");
+
+        return account;
     }
 
     private static void deleteAccount() {

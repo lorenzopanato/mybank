@@ -3,7 +3,11 @@ package com.mybank.transaction;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TransactionDAO {
 
@@ -36,5 +40,38 @@ public class TransactionDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public Set<Transaction> list() {
+
+        PreparedStatement ps;
+        ResultSet rs;
+
+        Set<Transaction> transactions = new HashSet<>();
+
+        String sql = "SELECT * FROM historico_transaçoes";
+
+        try {
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while(rs.next()) {
+                Integer id = rs.getInt(1);
+                Integer numberAccount = rs.getInt(2);
+                String type = rs.getString(3);
+                LocalDate date = rs.getDate(4).toLocalDate();
+                BigDecimal amount = rs.getBigDecimal(5);
+
+                transactions.add(new Transaction(id, numberAccount, type, date, amount));
+            }
+            ps.close();
+            conn.close();
+            rs.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        return transactions;
     }
 }

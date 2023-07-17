@@ -1,10 +1,8 @@
 package com.mybank.account;
 
 import com.mybank.customer.Customer;
-import com.mybank.transaction.Transaction;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 public abstract class Account {
 
