@@ -12,11 +12,11 @@ public class Transaction {
     private LocalDate date;
     private BigDecimal amount;
 
-    public Transaction(Integer accountNumber, String type, LocalDate date, BigDecimal amount) {
+    public Transaction(Integer accountNumber, String type, BigDecimal amount) {
         this.id = generateId();
         this.accountNumber = accountNumber;
         this.type = type;
-        this.date = date;
+        this.date = LocalDate.now();
         this.amount = amount;
     }
 

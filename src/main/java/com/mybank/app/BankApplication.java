@@ -3,6 +3,8 @@ package com.mybank.app;
 import com.mybank.ConnectionFactory;
 import com.mybank.account.Account;
 import com.mybank.account.AccountDAO;
+import com.mybank.transaction.Transaction;
+import com.mybank.transaction.TransactionDAO;
 
 
 import java.math.BigDecimal;
@@ -126,9 +128,13 @@ public class BankApplication {
 
         BigDecimal newBalance = account.getBalance().add(amount);
 
-        Connection conn = new ConnectionFactory().getConnection();
+        Connection conn1 = new ConnectionFactory().getConnection();
+        new AccountDAO(conn1).update(number, newBalance);
 
-        new AccountDAO(conn).update(number, newBalance);
+        Transaction transaction = new Transaction(number, "Depósito", amount);
+
+        Connection conn2 = new ConnectionFactory().getConnection();
+        new TransactionDAO(conn2).create(transaction);
 
         System.out.println("Depósito realizado com sucesso!");
     }
@@ -144,9 +150,13 @@ public class BankApplication {
 
         BigDecimal newBalance = account.getBalance().subtract(amount);
 
-        Connection conn = new ConnectionFactory().getConnection();
+        Connection conn1 = new ConnectionFactory().getConnection();
+        new AccountDAO(conn1).update(number, newBalance);
 
-        new AccountDAO(conn).update(number, newBalance);
+        Transaction transaction = new Transaction(number, "Saque", amount);
+
+        Connection conn2 = new ConnectionFactory().getConnection();
+        new TransactionDAO(conn2).create(transaction);
 
         System.out.println("Saque realizado com sucesso!");
     }
@@ -196,6 +206,15 @@ public class BankApplication {
 
         //deposito na conta de destino
         new AccountDAO(conn2).update(destinationAccount.getNumber(), newDestinationAccountBalance);
+
+        Transaction originTransaction = new Transaction(originAccountNumber, "Transferência realizada", amount);
+        Transaction destinationTransaction = new Transaction(destinationAccountNumber, "Transferência recebida", amount);
+
+        Connection conn3 = new ConnectionFactory().getConnection();
+        new TransactionDAO(conn3).create(originTransaction);
+
+        Connection conn4 = new ConnectionFactory().getConnection();
+        new TransactionDAO(conn4).create(destinationTransaction);
 
         System.out.println("Transferência realizada com sucesso!");
     }
