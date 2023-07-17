@@ -23,7 +23,7 @@ public class AccountDAO {
                        String customerEmail, String typeAccount) {
         PreparedStatement ps;
 
-        String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email, tipo_conta) " +
+        String sql = "INSERT INTO conta (numero_conta, saldo, cliente_nome, cliente_cpf, cliente_email, tipo_conta) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
@@ -89,7 +89,7 @@ public class AccountDAO {
 
         PreparedStatement ps;
 
-        String sql = "UPDATE conta SET saldo = ? WHERE numero = ?";
+        String sql = "UPDATE conta SET saldo = ? WHERE numero_conta = ?";
 
         try {
             ps = conn.prepareStatement(sql);
@@ -111,7 +111,7 @@ public class AccountDAO {
 
         PreparedStatement ps;
 
-        String sql = "DELETE FROM conta WHERE numero = ?";
+        String sql = "DELETE FROM conta WHERE numero_conta = ?";
 
         try {
             ps = conn.prepareStatement(sql);
